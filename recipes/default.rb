@@ -36,5 +36,33 @@ end
 include_recipe "nodejs::install_from_source"
 include_recipe "nodejs::npm"
 
+npm_package "express@2.5.11"
+npm_package "mime"
+
 include_recipe "mongodb::10gen_repo"
 include_recipe "mongodb::default"
+
+
+user node[:razor][:user] do
+  home node[:razor][:directory]
+end
+
+directory node[:razor][:directory] do
+  recursive true
+  owner node[:razor][:user]
+  group node[:razor][:group]
+end
+
+default[:tftp][:username] = node[:razor][:user]
+
+include_recipe "tftp"
+
+git node[:razor][:directory] do                            
+    repository [:razor][:git_source] 
+    revision [:razor][:git_revision]                                    
+    action :sync                                     
+  	owner node[:razor][:user]
+  	group node[:razor][:group] 
+end
+
+

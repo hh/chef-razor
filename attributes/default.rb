@@ -20,7 +20,6 @@
 # limitations under the License.
 #
 
-default[:razor][:username]            = 'razor'
 default[:razor][:directory]           = '/opt/razor'
 default[:razor][:address]             = node[:ipaddress]
 default[:razor][:persist_host]        = '127.0.0.1'
@@ -30,4 +29,13 @@ default[:razor][:mk_source]           = 'https://github.com/downloads/puppetlabs
 default[:razor][:git_source]          = 'http://github.com/fnichol/Razor.git'
 default[:razor][:git_revision]        = 'master'
 default[:razor][:ruby_version]        = '1.9.3-p327'
+
+default[:razor][:user]            = 'razor'
+
+case node[:platform]
+when "debian", "ubuntu"
+  default[:razor][:group] = "nogroup"
+else
+  default[:razor][:group] = node[:razor][:user]
+end
   
