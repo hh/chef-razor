@@ -42,6 +42,7 @@ npm_package "mime"
 include_recipe "mongodb::10gen_repo"
 include_recipe "mongodb::default"
 
+group node[:razor][:group]
 
 user node[:razor][:user] do
   home node[:razor][:directory]
