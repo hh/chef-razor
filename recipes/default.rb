@@ -42,28 +42,57 @@ npm_package "mime"
 include_recipe "mongodb::10gen_repo"
 include_recipe "mongodb::default"
 
-group node[:razor][:group]
-
-user node[:razor][:user] do
-  home node[:razor][:directory]
-end
+user  node[:razor][:user] { action :create }
+group  node[:razor][:group] { action :create }
 
 directory node[:razor][:directory] do
   recursive true
   owner node[:razor][:user]
   group node[:razor][:group]
+  mode 0755
 end
 
 default[:tftp][:username] = node[:razor][:user]
 
 include_recipe "tftp"
+include_recipe "dhcp"
 
 git node[:razor][:directory] do                            
     repository [:razor][:git_source] 
     revision [:razor][:git_revision]                                    
-    action :sync                                     
+    action [:razor][:git_action]                                     
   	owner node[:razor][:user]
   	group node[:razor][:group] 
+end
+
+service "razor_server" do
+  action :nothing
+end
+
+template "#{node[:razor][:directory]}/conf/razor_server.conf" do
+  variables( 
+    :mk_uri => node[:razor][:mk_uri],
+    :api_port => node[:razor][:api_port],
+    :admin_port => node[:razor][:admin_port],
+    :image_host => node[:razor][:image_host],
+    :image_port => node[:razor][:image_port],
+    :image_path => node[:razor][:image_dir],
+    :persist_mode => node[:razor][:persist_mode],
+    :persist_host => node[:razor][:persist_host],
+    :persist_port => node[:razor][:persist_port],
+    :debug_leve => node[:razor][:debug_level]
+   )
+   notifies :restart, "service[razor_server]", :delayed 
+end 
+
+service "razor_server" do
+  action :start
+  start_command "#{razor_dir}/bin/razor_daemon.rb start" 
+  stop_command "#{razor_dir}/bin/razor_daemon.rb stop" 
+  restart_command "#{razor_dir}/bin/razor_daemon.rb restart" 
+  reload_command "#{razor_dir}/bin/razor_daemon.rb reload" 
+  status_command "#{razor_dir}/bin/razor_daemon.rb status"
+  supports  :restart => true, :status => true 
 end
 
 
