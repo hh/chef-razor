@@ -1,6 +1,9 @@
 require 'berkshelf/vagrant'
 
 Vagrant::Config.run do |config|
+
+  config.vm.define :default do |box_config|
+
   # All Vagrant configuration is done here. The most common configuration
   # options are documented and commented below. For a complete reference,
   # please see the online documentation at vagrantup.com.
@@ -15,11 +18,13 @@ Vagrant::Config.run do |config|
   # An array of symbols representing groups of cookbook described in the Vagrantfile
   # to skip installing and copying to Vagrant's shelf.
   # config.berkshelf.except = []
+  
+  box_config.vm.host_name = "razor-berkshelf"
+  
+  box_config.vm.customize ["modifyvm", :id, "--memory", 1024]
 
-  config.vm.host_name = "razor-berkshelf"
-
-  config.vm.box = "opscode-ubuntu-12.04"
-  config.vm.box_url = "https://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-ubuntu-12.04.box"
+  box_config.vm.box = "opscode-ubuntu-12.04"
+  box_config.vm.box_url = "https://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-ubuntu-12.04.box"
 
   # Boot with a GUI so you can see the screen. (Default is headless)
   # config.vm.boot_mode = :gui
@@ -28,7 +33,7 @@ Vagrant::Config.run do |config|
   # via the IP. Host-only networks can talk to the host machine as well as
   # any other machines on the same network, but cannot be accessed (through this
   # network interface) by any external networks.
-  config.vm.network :hostonly, "33.33.33.10"
+  box_config.vm.network :hostonly, "33.33.33.10"
 
   # Assign this VM to a bridged network, allowing you to connect directly to a
   # network using the host's network device. This makes the VM appear as another
@@ -45,21 +50,49 @@ Vagrant::Config.run do |config|
   # folder, and the third is the path on the host to the actual folder.
   # config.vm.share_folder "v-data", "/vagrant_data", "../data"
 
-  config.ssh.max_tries = 40
-  config.ssh.timeout   = 120
+  box_config.ssh.max_tries = 40
+  box_config.ssh.timeout   = 120
 
-  config.vm.provision :chef_solo do |chef|
+  box_config.vm.provision :chef_solo do |chef|
     chef.json = {
       :rbenv => {
         :git_repository => 'https://github.com/sstephenson/rbenv.git'
       },
       :ruby_build => {
         :git_repository => 'https://github.com/sstephenson/ruby-build.git'
+      },
+      :dhcp => {
+        :master => true,
+        :slave => false,
+        :interfaces => ["eth1"],
+        :networks => ["192-168-1-0_24"]
       }
     }
+
+    chef.data_bags_path = "examples/data_bags"
 
     chef.run_list = [
       "recipe[razor::default]"
     ]
+  end
+
+end
+
+  config.vm.define :"pxe-test-1" do |box_config|
+    
+    box_config.vm.box = 'pxe-blank'
+
+    box_config.vm.box_url = 'https://github.com/downloads/benburkert/bootstrap-razor/pxe-blank.box'
+
+    box_config.vm.boot_mode = 'gui'
+    box_config.ssh.port = 2222
+    box_config.ssh.max_tries = 40
+    box_config.ssh.timeout   = 120
+
+    box_config.vm.customize ["modifyvm", :id, "--name", 'pxe_test_1.localdomain']
+    box_config.vm.customize ["modifyvm", :id, "--nictype1", 'Am79C973']
+    box_config.vm.customize ["modifyvm", :id, "--nic1", 'hostonly']
+    box_config.vm.customize ["modifyvm", :id, "--hostonlyadapter1", 'vboxnet1']
+
   end
 end
