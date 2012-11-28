@@ -23,7 +23,9 @@
 include_recipe "rbenv::default"
 include_recipe "rbenv::ruby_build"
 
-rbenv_ruby node[:razor][:ruby_version]
+rbenv_ruby node[:razor][:ruby_version] do
+  global true
+end
 
 %W{autotest base62 bson bson_ext colored daemons json logger macaddr mocha mongo net-ssh require_all syntax uuid}.each do |gem_package|
 
@@ -52,16 +54,16 @@ directory node[:razor][:directory] do
   mode 0755
 end
 
-default[:tftp][:username] = node[:razor][:user]
+node.set[:tftp][:username] = node[:razor][:user]
 
 include_recipe "tftp"
 include_recipe "dhcp"
 
 git node[:razor][:directory] do                            
-    repository [:razor][:git_source] 
-    revision [:razor][:git_revision]                                    
-    action [:razor][:git_action]                                     
-  	owner node[:razor][:user]
+    repository node[:razor][:git_source] 
+    revision node[:razor][:git_revision]                                    
+    action node[:razor][:git_action]                                     
+  	user node[:razor][:user]
   	group node[:razor][:group] 
 end
 
@@ -87,11 +89,11 @@ end
 
 service "razor_server" do
   action :start
-  start_command "#{razor_dir}/bin/razor_daemon.rb start" 
-  stop_command "#{razor_dir}/bin/razor_daemon.rb stop" 
-  restart_command "#{razor_dir}/bin/razor_daemon.rb restart" 
-  reload_command "#{razor_dir}/bin/razor_daemon.rb reload" 
-  status_command "#{razor_dir}/bin/razor_daemon.rb status"
+  start_command "#{node[:razor][:directory]}/bin/razor_daemon.rb start" 
+  stop_command "#{node[:razor][:directory]}/bin/razor_daemon.rb stop" 
+  restart_command "#{node[:razor][:directory]}/bin/razor_daemon.rb restart" 
+  reload_command "#{node[:razor][:directory]}/bin/razor_daemon.rb reload" 
+  status_command "#{node[:razor][:directory]}/bin/razor_daemon.rb status"
   supports  :restart => true, :status => true 
 end
 
