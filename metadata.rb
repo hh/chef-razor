@@ -11,5 +11,6 @@ depends "npm"
 depends "rbenv"
 depends "mongodb"
 depends "tftp"
+depends "dhcp"
 
 
