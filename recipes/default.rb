@@ -38,9 +38,6 @@ end
 include_recipe "nodejs::install_from_source"
 include_recipe "nodejs::npm"
 
-npm_package "express@2.5.11"
-npm_package "mime"
-
 include_recipe "mongodb::10gen_repo"
 include_recipe "mongodb::default"
 
@@ -58,36 +55,7 @@ node.set[:tftp][:username] = node[:razor][:user]
 
 include_recipe "tftp"
 
-module ::DHCP
-  module Failover
-    class << self
-           def slaves
-        []
-      end
-
-      def masters
-        [@node]
-      end
-
-    end
-  end
-end
-
-module ::DHCP
-  module DynaDns 
-    class  << self 
-      def masters
-        Hash.new 
-      end
-      def keys
-        Hash.new 
-      end
-
-    end
-  end
-end
-
-include_recipe "dhcp::server"
+include_recipe "razor::isc-dhcp"
 
 git node[:razor][:directory] do                            
     repository node[:razor][:git_source] 
@@ -95,6 +63,13 @@ git node[:razor][:directory] do
     action node[:razor][:git_action]                                     
   	user node[:razor][:user]
   	group node[:razor][:group] 
+end
+
+%W{express@2.5.11 mime}.each do |node_pkg|
+  npm_package node_pkg do
+    action :install_local 
+    path File.join(node[:razor][:directory],"bin")
+  end
 end
 
 service "razor_server" do
@@ -126,5 +101,30 @@ service "razor_server" do
   status_command "#{node[:razor][:directory]}/bin/razor_daemon.rb status"
   supports  :restart => true, :status => true 
 end
+
+remote_file File.join(node[:razor][:directory],node[:razor][:mk_name])  do
+  source node[:razor][:mk_source]
+  mode 00644
+  action :create_if_missing
+end
+
+remote_directory node['tftp']['directory'] do
+  source "razor-tftp"
+  files_mode 00644
+  owner "razor"
+  group "razor"
+  mode 00755
+end
+
+template File.join(node['tftp']['directory'],"razor.ipxe") do
+  owner "razor"
+  group "razor"
+  mode 00644  
+  variables( 
+    :address => node[:razor][:image_host],
+    :port => node[:razor][:image_port]
+   )
+end 
+
 
 
