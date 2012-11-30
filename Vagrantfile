@@ -66,7 +66,11 @@ Vagrant::Config.run do |config|
         :slave => false,
         :interfaces => ["eth1"],
         :networks => ["192-168-1-0_24"]
+      },
+      :razor => {
+        :image_host => "33.33.33.10"
       }
+
     }
 
     chef.data_bags_path = "examples/data_bags"
