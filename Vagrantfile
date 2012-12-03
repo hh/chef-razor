@@ -68,7 +68,8 @@ Vagrant::Config.run do |config|
         :networks => ["192-168-1-0_24"]
       },
       :razor => {
-        :image_host => "33.33.33.10"
+        :image_host => "33.33.33.10",
+        :api_host => "33.33.33.10"
       }
 
     }
@@ -92,6 +93,7 @@ end
     box_config.ssh.port = 2222
     box_config.ssh.max_tries = 40
     box_config.ssh.timeout   = 120
+
 
     box_config.vm.customize ["modifyvm", :id, "--name", 'pxe_test_1.localdomain']
     box_config.vm.customize ["modifyvm", :id, "--nictype1", 'Am79C973']
