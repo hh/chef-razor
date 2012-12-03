@@ -94,11 +94,11 @@ end
 
 service "razor_server" do
   action :start
-  start_command "#{node[:razor][:directory]}/bin/razor_daemon.rb start" 
-  stop_command "#{node[:razor][:directory]}/bin/razor_daemon.rb stop" 
-  restart_command "#{node[:razor][:directory]}/bin/razor_daemon.rb restart" 
-  reload_command "#{node[:razor][:directory]}/bin/razor_daemon.rb reload" 
-  status_command "#{node[:razor][:directory]}/bin/razor_daemon.rb status"
+  start_command ". /etc/profile.d/rbenv.sh ; #{node[:razor][:directory]}/bin/razor_daemon.rb start" 
+  stop_command ". /etc/profile.d/rbenv.sh ; #{node[:razor][:directory]}/bin/razor_daemon.rb stop" 
+  restart_command ". /etc/profile.d/rbenv.sh ; #{node[:razor][:directory]}/bin/razor_daemon.rb restart" 
+  reload_command ". /etc/profile.d/rbenv.sh ; #{node[:razor][:directory]}/bin/razor_daemon.rb reload" 
+  status_command ". /etc/profile.d/rbenv.sh ; #{node[:razor][:directory]}/bin/razor_daemon.rb status"
   supports  :restart => true, :status => true 
 end
 
@@ -121,8 +121,8 @@ template File.join(node['tftp']['directory'],"razor.ipxe") do
   group "razor"
   mode 00644  
   variables( 
-    :address => node[:razor][:image_host],
-    :port => node[:razor][:image_port]
+    :address => node[:razor][:api_host],
+    :port => node[:razor][:api_port]
    )
 end 
 
