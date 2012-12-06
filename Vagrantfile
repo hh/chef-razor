@@ -33,7 +33,7 @@ Vagrant::Config.run do |config|
   # via the IP. Host-only networks can talk to the host machine as well as
   # any other machines on the same network, but cannot be accessed (through this
   # network interface) by any external networks.
-  box_config.vm.network :hostonly, "33.33.33.10"
+  box_config.vm.network :hostonly, "10.0.124.9"
 
   # Assign this VM to a bridged network, allowing you to connect directly to a
   # network using the host's network device. This makes the VM appear as another
@@ -65,11 +65,11 @@ Vagrant::Config.run do |config|
         :master => true,
         :slave => false,
         :interfaces => ["eth1"],
-        :networks => ["192-168-1-0_24"]
+        :networks => ["10-0-124-0_24"]
       },
       :razor => {
-        :image_host => "33.33.33.10",
-        :api_host => "33.33.33.10"
+        :image_host => "10.0.124.9",
+        :api_host => "10.0.124.9"
       }
 
     }
@@ -83,22 +83,31 @@ Vagrant::Config.run do |config|
 
 end
 
-  config.vm.define :"pxe-test-1" do |box_config|
+  1.upto(2).each do |pxe_number|
+    name = "pxe-test-#{pxe_number}".to_s 
+    config.vm.define name.to_sym do |box_config|
     
-    box_config.vm.box = 'pxe-blank'
+      box_config.vm.box = 'pxe-blank'
 
-    box_config.vm.box_url = 'https://github.com/downloads/benburkert/bootstrap-razor/pxe-blank.box'
+      box_config.vm.box_url = 'https://github.com/downloads/benburkert/bootstrap-razor/pxe-blank.box'
 
-    box_config.vm.boot_mode = 'gui'
-    box_config.ssh.port = 2222
-    box_config.ssh.max_tries = 40
-    box_config.ssh.timeout   = 120
+      box_config.vm.boot_mode = 'gui'
+      box_config.ssh.port = 22
+      box_config.ssh.max_tries = 40
+      box_config.ssh.timeout   = 120
+
+      #box_config.vm.network :hostonly, "10.0.124.1#{pxe_number}"
+      box_config.vm.network :hostonly, "10.0.123.1#{pxe_number}"
+
+      box_config.vm.customize ["modifyvm", :id, "--name", "pxe_test_#{pxe_number}.localdomain"]
+      box_config.vm.customize ["modifyvm", :id, "--nictype1", 'Am79C973']
+      box_config.vm.customize ["modifyvm", :id, "--hostonlyadapter1", 'vboxnet2']
+      box_config.vm.customize ["modifyvm", :id, "--macaddress1", "c0ffee00000#{pxe_number}"]
 
 
-    box_config.vm.customize ["modifyvm", :id, "--name", 'pxe_test_1.localdomain']
-    box_config.vm.customize ["modifyvm", :id, "--nictype1", 'Am79C973']
-    box_config.vm.customize ["modifyvm", :id, "--nic1", 'hostonly']
-    box_config.vm.customize ["modifyvm", :id, "--hostonlyadapter1", 'vboxnet1']
+      # use 
+      box_config.vm.customize ["modifyvm", :id, "--memory", 2048]
 
+    end
   end
 end
