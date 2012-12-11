@@ -100,7 +100,7 @@ end
       box_config.vm.network :hostonly, "10.0.123.1#{pxe_number}"
 
       box_config.vm.customize ["modifyvm", :id, "--name", "pxe_test_#{pxe_number}.localdomain"]
-      box_config.vm.customize ["modifyvm", :id, "--nictype1", 'Am79C973']
+      #box_config.vm.customize ["modifyvm", :id, "--nictype1", 'Am79C973']
       box_config.vm.customize ["modifyvm", :id, "--hostonlyadapter1", 'vboxnet2']
       box_config.vm.customize ["modifyvm", :id, "--macaddress1", "c0ffee00000#{pxe_number}"]
 
