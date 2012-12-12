@@ -1,5 +1,7 @@
 # razor cookbook
 
+[![Build Status](https://secure.travis-ci.org/cloudbau/chef-razor.png)](http://travis-ci.org/cloudbau/chef-razor)
+
 ## Requirements
 
 ## Usage
