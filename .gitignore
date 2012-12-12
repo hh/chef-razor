@@ -9,4 +9,4 @@ Gemfile.lock
 *.un~
 /cookbooks
 .chef
-
+tmp/
