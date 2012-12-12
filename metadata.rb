@@ -12,5 +12,6 @@ depends "rbenv"
 depends "mongodb"
 depends "tftp"
 depends "dhcp"
+depends "dnsmasq"
 
 
