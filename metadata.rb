@@ -13,5 +13,6 @@ depends "mongodb"
 depends "tftp"
 depends "dhcp"
 depends "dnsmasq"
+depends "nodejs"
 
 
