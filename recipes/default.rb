@@ -108,7 +108,7 @@ remote_file File.join(node[:razor][:directory],node[:razor][:mk_name])  do
   action :create_if_missing
 end
 
-remote_directory node['tftp']['directory'] do
+remote_directory node[:tftp][:directory] do
   source "razor-tftp"
   files_mode 00644
   owner "razor"
@@ -116,7 +116,7 @@ remote_directory node['tftp']['directory'] do
   mode 00755
 end
 
-template File.join(node['tftp']['directory'],"razor.ipxe") do
+template File.join(node[:tftp][:directory],"razor.ipxe") do
   owner "razor"
   group "razor"
   mode 00644  
