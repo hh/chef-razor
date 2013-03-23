@@ -1,4 +1,4 @@
-require 'berkshelf/vagrant'
+#require 'berkshelf/vagrant'
 
 Vagrant::Config.run do |config|
 

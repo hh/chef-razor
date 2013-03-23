@@ -11,11 +11,13 @@ Configures and installs razor to provision bare-metal nodes
 ### Lab environment
 
 - Install vagrant [http://downloads.vagrantup.com](http://downloads.vagrantup.com)
-- Install berkshelf [http://berkshelf.com](http://berkshelf.com)
-- `bundle install` 
+- Install berkshelf [http://berkshelf.com](http://berkshelf.com) as a chef_gem
+```sudo /opt/chef/embedded/bin/gem install berkshelf```
+- Do not use `bundle install` 
 
-start the razor server
+get the cookbooks and start the razor server
 
+  berks install --path ./cookbooks
 	vagrant up default
 
 wait until it is provisioned
