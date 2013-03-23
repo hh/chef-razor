@@ -26,7 +26,7 @@ default[:razor][:persist_host]        = '127.0.0.1'
 default[:razor][:mk_checkin_interval] = '60'
 default[:razor][:mk_name]             = 'rz_mk_prod-image.0.9.1.6.iso'
 default[:razor][:mk_source]           = 'https://github.com/downloads/puppetlabs/Razor-Microkernel/rz_mk_prod-image.0.9.1.6.iso'
-default[:razor][:git_source]          = 'https://github.com/fnichol/Razor.git'
+default[:razor][:git_source]          = 'https://github.com/puppetlabs/Razor.git'
 default[:razor][:git_revision]        = 'master'
 default[:razor][:git_action] 		  =  :sync
 default[:razor][:ruby_version]        = '1.9.3-p327'
@@ -58,4 +58,4 @@ default[:razor][:persist_port] = "27017"
 default[:razor][:persist_mode] = ":mongo"
 default[:razor][:debug_level] = ""
 
-  
+
