@@ -26,8 +26,17 @@ include_recipe "rbenv::ruby_build"
 rbenv_ruby node[:razor][:ruby_version] do
   global true
 end
+# autotest
+# root@razor-berkshelf:~# /opt/rbenv/versions/1.9.3-p327/bin/gem install autotest -q --no-rdoc --no-ri -v "4.4.6"
+# Invalid gemspec in [/opt/rbenv/versions/1.9.3-p327/lib/ruby/gems/1.9.1/specifications/ZenTest-4.9.0.gemspec]: Illformed requirement ["< 2.1, >= 1.8"]
+# Invalid gemspec in [/opt/rbenv/versions/1.9.3-p327/lib/ruby/gems/1.9.1/specifications/ZenTest-4.9.0.gemspec]: Illformed requirement ["< 2.1, >= 1.8"]
+# Invalid gemspec in [/opt/rbenv/versions/1.9.3-p327/lib/ruby/gems/1.9.1/specifications/ZenTest-4.9.0.gemspec]: Illformed requirement ["< 2.1, >= 1.8"]
+# Invalid gemspec in [/opt/rbenv/versions/1.9.3-p327/lib/ruby/gems/1.9.1/specifications/ZenTest-4.9.0.gemspec]: Illformed requirement ["< 2.1, >= 1.8"]
+# Invalid gemspec in [/opt/rbenv/versions/1.9.3-p327/lib/ruby/gems/1.9.1/specifications/ZenTest-4.9.0.gemspec]: Illformed requirement ["< 2.1, >= 1.8"]
+# ERROR:  Error installing autotest:
+# 	autotest requires ZenTest (>= 4.4.1)
 
-%W{autotest base62 bson bson_ext colored daemons json logger macaddr mocha mongo net-ssh require_all syntax uuid}.each do |gem_package|
+%W{base62 bson bson_ext colored daemons json logger macaddr mocha mongo net-ssh require_all syntax uuid}.each do |gem_package|
 
 	rbenv_gem gem_package do
 	  ruby_version node[:razor][:ruby_version]
